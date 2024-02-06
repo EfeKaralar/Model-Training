@@ -1,0 +1,40 @@
+# TODO: Update path, train, val, test
+
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+path: ../datasets/coco8  # dataset root dir
+train: images/train  # train images (relative to 'path') 4 images
+val: images/val  # val images (relative to 'path') 4 images
+test:  # test images (optional)
+
+# Classes (29 COCO classes)
+names:
+    0: addedLane
+    1: curveRight
+    2: dip
+    3: intersection
+    4: laneEnds
+    5: merge
+    6: pedestrianCrossing
+    7: signalAhead
+    8: slow
+    9: stopAhead
+    10: thruMergeLeft
+    11: thruMergeRight
+    12: turnLeft
+    13: turnRight
+    14: yieldAhead
+    15: doNotPass
+    16: keepRight
+    17: rightLaneMustTurn
+    18: speedLimit15
+    19: speedLimit25
+    20: speedLimit30
+    21: speedLimit35
+    22: speedLimit40
+    23: speedLimit45
+    24: speedLimit50
+    25: speedLimit55
+    26: speedLimit65
+    27: truckSpeedLimit55
+    28: speedLimitUrdbl
+    
