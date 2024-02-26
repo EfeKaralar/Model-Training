@@ -84,7 +84,7 @@ for image_id, group in grouped:
     yolo_annotations_str = '\n'.join(yolo_annotations)   
     # Write the YOLO annotations to a .txt file
     os.makedirs(os.path.dirname(os.path.join(label_path, image_id)), exist_ok=True)
-    with open(os.path.join(label_path, f'{image_id}.txt'), 'w') as f:
+    with open(os.path.join(label_path, f'{image_id[:image_id.rfind(".png")]}.txt'), 'w') as f:
         for annotation in yolo_annotations:
             f.write(f"{annotation}\n")
             file_count += 1
