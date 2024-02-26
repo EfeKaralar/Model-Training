@@ -6,35 +6,53 @@ train: images/train  # train images (relative to 'path') 4 images
 val: labels/train  # val images (relative to 'path') 4 images
 test:  # test images (optional)
 
-# Classes (29 COCO classes)
+# Classes (46 COCO classes)
 names:
-    0: addedLane
-    1: curveRight
-    2: dip
-    3: intersection
-    4: laneEnds
-    5: merge
-    6: pedestrianCrossing
-    7: signalAhead
-    8: slow
-    9: stop
-    10: thruMergeLeft
-    11: thruMergeRight
-    12: turnLeft
-    13: turnRight
-    14: yieldAhead
-    15: doNotPass
-    16: keepRight
-    17: rightLaneMustTurn
-    18: speedLimit15
-    19: speedLimit25
-    20: speedLimit30
-    21: speedLimit35
-    22: speedLimit40
-    23: speedLimit45
-    24: speedLimit50
-    25: speedLimit55
-    26: speedLimit65
-    27: truckSpeedLimit55
-    28: speedLimitUrdbl
-    
+
+    0: addedLane 
+    1: slow
+    2: curveLeft 
+    3: speedLimit15
+    4: curveRight 
+    5: speedLimit25
+    6: dip 
+    7: speedLimit30
+    8: doNotEnter 
+    9: speedLimit35
+    10: doNotPass
+    11: speedLimit40
+    12: intersection 
+    13: speedLimit45
+    14: keepRight 
+    15: speedLimit50
+    16: laneEnds
+    17: speedLimit55
+    18: merge
+    19: speedLimit65
+    20: noLeftTurn
+    21: speedLimitUrdbl
+    22: noRightTurn 
+    23: stop
+    24: pedestrianCrossing
+    25: stopAhead
+    26: rampSpeedAdvisory20
+    27: thruMergeLeft
+    28: rampSpeedAdvisory35 
+    29: thruMergeRight
+    30: rampSpeedAdvisory40
+    31: thruTrafficMergeLeft
+    32: rampSpeedAdvisory45 
+    33: truckSpeedLimit55
+    34: rampSpeedAdvisory50
+    35: turnLeft
+    36: rampSpeedAdvisoryUrdbl
+    37: turnRight
+    38: rightLaneMustTurn
+    39: yield
+    40: roundabout
+    41: yieldAhead
+    42: school
+    43: zoneAhead25
+    44: schoolSpeedLimit25
+    45: zoneAhead45
+    46: signalAhead
