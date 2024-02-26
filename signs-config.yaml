@@ -4,7 +4,7 @@
 path: /home/alp/AVTPerception/February/AVT-Perception/datasets/signs  # dataset root dir
 train: images/train # train images (relative to 'path') 4 images
 val: images/train  # val images (relative to 'path') 4 images
-test:  # test images (optional)
+test: images/train # test images (optional)
 
 # Classes (46 COCO classes)
 names:
