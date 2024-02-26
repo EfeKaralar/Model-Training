@@ -2,37 +2,33 @@ import os
 import csv
 import yaml
 from PIL import Image
+import pandas as pd
 
-UPPER_LIMIT = 5
+UPPER_LIMIT = 300
 
-annotation_source_path = "/home/alp/AVTPerception/February/AVT-Perception/datasets/signs/allAnnotations.csv"
-train_path = "/home/alp/AVTPerception/February/AVT-Perception/datasets/signs/labels/train"
-
-
-# open the yaml file
-with open("signs-config.yaml", "r") as file:
-    config = yaml.safe_load(file)
-    names = config["names"]
-    path = "datasets/signs"
-    images_train_path = path + "/" + config.get("train")
-    val_train_path = path + "/" + config.get("val")
+annotation_source_path = "datasets/signs/allAnnotations.csv"
+image_path = "datasets/signs/images/train"
+label_path = "datasets/signs/labels/train"
 
 
-def getTrueLocationFromCSV(file_name_in_csv : str):
-    return "/home/alp/AVTPerception/February/AVT-Perception/datasets/signs/images/train" + "/" + file_name_in_csv
 
-
-def getIndexFromName(class_name : str):
+def getIndexFromName(names : dict, class_name : str):
     return list(names.keys())[list(names.values()).index(class_name)]
 
 
-def convertToYoloAnnotation(file_name : str, class_name : str, x_uleft : int, y_uleft : int, x_lright : int, y_lright : int):
-    # TODO: Fix x_center and y_center values, it is currently giving negative values for some reason
+def convertToYoloAnnotation(row):
     
     # Returns: [class_id, x_center, y_center, normalized_width, normalized_height] (every val is between 0 & 1)
     
+    file_name, class_name = row['Filename'], row['Annotation tag']
+    x_uleft, y_uleft = row['Upper left corner X'], row['Upper left corner Y']
+    x_lright, y_lright = row['Lower right corner X'], row['Lower right corner Y']
+
     # getting pixel size of the image
-    img = Image.open(file_name)
+    image_file_path = os.path.join(image_path, file_name)
+
+
+    img = Image.open(image_file_path)
     img_width, img_height = img.size
 
     # finding normalized width
@@ -53,48 +49,37 @@ def convertToYoloAnnotation(file_name : str, class_name : str, x_uleft : int, y_
 
     # getting class id
 
-    class_id = getIndexFromName(class_name)
+    class_id = getIndexFromName(dict(row), class_name)
     
     return class_id, x_center, y_center, normalized_width, normalized_height
 
-def createAnnotations():
-    #os.chdir("/home/alp/AVTPerception/February/AVT-Perception")
-    counter = 0
-    with open(annotation_source_path) as csvFile:
-        reader = csv.DictReader(csvFile, delimiter = ";")
-        for row in reader:
-            YOLO_formatted = convertToYoloAnnotation( getTrueLocationFromCSV(row["Filename"]), row["Annotation tag"],
-                                   int(row["Upper left corner X"]), int(row["Upper left corner Y"]), 
-                                   int(row["Lower right corner X"]), int(row["Lower right corner Y"]))
-            createYoloAnnotation(row["Filename"] + ".txt", YOLO_formatted)
-            if counter >= UPPER_LIMIT:
-                return
-            counter += 1
     
 
-def createYoloAnnotation( file_name: str ,YOLO_formatted: tuple):
-    os.chdir(train_path)
-    with open(file_name, "a") as new_file:
-        line = " ".join(YOLO_formatted) + "\n"
-        new_file.write(line)
+# Read the CSV file
+df = pd.read_csv(annotation_source_path,  sep=";")
 
+# Group the data by image ID
+grouped = df.groupby('Filename')
 
-# TESTING
+os.makedirs(label_path, exist_ok=True)
 
-# Testing for convertion logic
+file_count = 0
 
-# with open("./datasets/signs/allAnnotations.csv") as csvFile:
-#     reader = csv.DictReader(csvFile, delimiter = ";")os.chdir("/home/alp/AVTPerception/February/AVT-Perception/datasets/signs/labels/train")
-#     limiter = 0
-#     for file_test in reader:
-#         out = convertToYoloAnnotation( getTrueLocationFromCSV(file_test["Filename"]), file_test["Annotation tag"],
-#                                    int(file_test["Upper left corner X"]), int(file_test["Upper left corner Y"]), 
-#                                    int(file_test["Lower right corner X"]), int(file_test["Lower right corner Y"]))
-#         print(out[0], out[1], out[2], out[3], out[4])
-#         limiter += 1
-#         # test for 5 values
-#         if limiter == 5:
-#             break
+# Iterate over the groups and create a .txt file for each image
+for image_id, group in grouped:
+    # Check if the image file exists
+    image_file_path = os.path.join(image_path, image_id)
+    if not os.path.exists(image_file_path):
+        continue
 
+    # Generate YOLO annotations for each bbox
+    yolo_annotations = group.apply(convertToYoloAnnotation, axis=1)    
+    # Write the YOLO annotations to a .txt file
+    os.makedirs(os.path.dirname(os.path.join(label_path, image_id)), exist_ok=True)
+    with open(os.path.join(label_path, f'{image_id}.txt'), 'w') as f:
+        for annotation in yolo_annotations:
+            f.write(f"{annotation}\n")
+            file_count += 1
 
-createAnnotations()
+print("Number of files created:", file_count)
+
